@@ -7,8 +7,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class EpisodeDataSource @Inject constructor(var api: JsonApi) {
+class DataSource @Inject constructor(var api: JsonApi) {
     suspend fun getAllEpisodes(): Response<EpisodeApiData> {
         return api.getAllEpisodes()
+    }
+    suspend fun getEpisodeById(id:Int):Response<Episode>{
+        return api.getEpisodeById(id)
     }
 }

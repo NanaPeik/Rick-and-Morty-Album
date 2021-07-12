@@ -1,4 +1,4 @@
-package ge.sweeft.rickandmortyalbum.model
+package ge.sweeft.rickandmortyalbum.episode
 
 import dagger.Module
 import dagger.Provides

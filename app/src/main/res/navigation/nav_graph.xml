@@ -9,5 +9,14 @@
         android:id="@+id/episodeListFragment"
         android:name="ge.sweeft.rickandmortyalbum.episode.EpisodeListFragment"
         android:label="fragment_episode_list"
-        tools:layout="@layout/fragment_episode_list" />
+        tools:layout="@layout/fragment_episode_list">
+        <action
+            android:id="@+id/action_episodeListFragment_to_characterListFragment"
+            app:destination="@id/characterListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/characterListFragment"
+        android:name="ge.sweeft.rickandmortyalbum.character.CharacterListFragment"
+        android:label="fragment_character_list"
+        tools:layout="@layout/fragment_character_list" />
 </navigation>

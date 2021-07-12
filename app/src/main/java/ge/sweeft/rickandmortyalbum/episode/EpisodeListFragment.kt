@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ge.sweeft.rickandmortyalbum.databinding.FragmentEpisodeListBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Episode
-import ge.sweeft.rickandmortyalbum.viewmodel.EpisodeViewModel
 
 @AndroidEntryPoint
 class EpisodeListFragment : Fragment() {
