@@ -16,4 +16,9 @@ interface JsonApi {
     suspend fun getEpisodeById(
         @Path("id") id: Int
     ): Response<Episode>
+
+    @GET("character/{id}")
+    suspend fun getCharacterById(
+        @Path("id") id: Int
+    ): Response<Character>
 }

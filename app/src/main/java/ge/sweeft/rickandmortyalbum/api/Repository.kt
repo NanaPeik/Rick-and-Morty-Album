@@ -8,4 +8,6 @@ class Repository @Inject constructor(
     suspend fun getAllEpisodes() = dataSource.getAllEpisodes().body()
 
     suspend fun getEpisodeById(id: Int) = dataSource.getEpisodeById(id).body()
+
+    suspend fun getCharacterById(id: Int) = dataSource.getCharacterById(id).body()
 }
