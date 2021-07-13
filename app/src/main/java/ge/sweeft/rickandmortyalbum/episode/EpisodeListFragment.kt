@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -84,7 +85,8 @@ class EpisodeListFragment : Fragment() {
     }
 
     private fun setEpisodesAdapter(episodes: List<Episode>) {
-        this.episodesAdapter = EpisodesAdapter(episodes)
+
+        this.episodesAdapter = EpisodesAdapter(episodes,parentFragmentManager)
 
         binding.characterDetailEpisodes.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)

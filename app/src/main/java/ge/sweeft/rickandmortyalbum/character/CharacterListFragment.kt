@@ -80,7 +80,7 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun setCharacterAdapter(characters: List<Character>) {
-        this.characterAdapter = CharacterAdapter(characters)
+        this.characterAdapter = CharacterAdapter(characters, parentFragmentManager)
 
         binding.characterRecycler.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
