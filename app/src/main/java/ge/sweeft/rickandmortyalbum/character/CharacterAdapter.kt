@@ -9,8 +9,10 @@ import ge.sweeft.rickandmortyalbum.databinding.CharacterItemBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Character
 
 class CharacterAdapter(
-    var characters: List<Character>
+    private var characters: List<Character>
 ) : RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
+
+    private var charactersList: ArrayList<Character> = characters as ArrayList<Character>
 
     class ViewHolder(var binding: CharacterItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(character: Character) {
@@ -36,10 +38,20 @@ class CharacterAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.onBind(characters[position])
+        holder.onBind(charactersList[position])
     }
 
     override fun getItemCount(): Int {
-        return characters.size
+        return charactersList.size
+    }
+
+    fun search(newText: String?) {
+        charactersList = arrayListOf()
+        for (character in characters) {
+            if (newText?.let { character.name.contains(it) } == true) {
+                charactersList.add(character)
+            }
+        }
+        notifyDataSetChanged()
     }
 }

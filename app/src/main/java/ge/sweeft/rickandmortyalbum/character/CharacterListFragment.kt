@@ -1,9 +1,9 @@
 package ge.sweeft.rickandmortyalbum.character
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -23,6 +23,8 @@ class CharacterListFragment : Fragment() {
     private val characterViewModel: CharacterViewModel by viewModels()
     private val args: CharacterListFragmentArgs by navArgs()
 
+    private var mContext: Context? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,6 +32,12 @@ class CharacterListFragment : Fragment() {
     ): View {
         binding = FragmentCharacterListBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mContext = activity
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,14 +52,31 @@ class CharacterListFragment : Fragment() {
 
             }
         })
+        searchCharacters()
+    }
+
+    private fun searchCharacters() {
+        binding.searchCharacter.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                binding.searchCharacter.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+
+                characterAdapter.search(newText)
+                return true
+            }
+
+        })
     }
 
     private fun getCharactersApi(charactersUrl: List<String>) {
         characterViewModel.getCharacters(charactersUrl)
-            characterViewModel.characterResponse.observe(viewLifecycleOwner, {
-                    setCharacterAdapter(it)
-                    this.characterAdapter.notifyDataSetChanged()
-            })
+        characterViewModel.characterResponse.observe(viewLifecycleOwner, {
+            setCharacterAdapter(it)
+            this.characterAdapter.notifyDataSetChanged()
+        })
     }
 
     private fun setCharacterAdapter(characters: List<Character>) {

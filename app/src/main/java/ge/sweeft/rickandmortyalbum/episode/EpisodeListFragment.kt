@@ -1,9 +1,8 @@
 package ge.sweeft.rickandmortyalbum.episode
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -56,7 +55,24 @@ class EpisodeListFragment : Fragment() {
                 }
             })
         }
+        searchEpisodes()
+    }
 
+    private fun searchEpisodes(){
+        binding.searchEpisode.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                binding.searchEpisode.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    episodesAdapter.search(newText)
+                }
+                return true
+            }
+
+        })
     }
 
     private fun getEpisodesUrl(episodesUrl: List<String>) {
@@ -74,4 +90,5 @@ class EpisodeListFragment : Fragment() {
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         binding.characterDetailEpisodes.adapter = episodesAdapter
     }
+
 }
