@@ -1,16 +1,13 @@
 package ge.sweeft.rickandmortyalbum.character
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import ge.sweeft.rickandmortyalbum.R
 import ge.sweeft.rickandmortyalbum.databinding.CharacterItemBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Character
-import ge.sweeft.rickandmortyalbum.episode.EpisodeListFragment
 
 class CharacterAdapter(
     private var characters: List<Character>,

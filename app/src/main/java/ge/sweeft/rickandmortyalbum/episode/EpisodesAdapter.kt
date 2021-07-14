@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import ge.sweeft.rickandmortyalbum.R
 import ge.sweeft.rickandmortyalbum.databinding.EpisodeItemBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Episode
 

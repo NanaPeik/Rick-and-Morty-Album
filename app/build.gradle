@@ -9,7 +9,9 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
+    kapt {
+        generateStubs = true
+    }
     defaultConfig {
         applicationId "ge.sweeft.rickandmortyalbum"
         minSdkVersion 26
@@ -66,7 +68,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
 
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
@@ -80,4 +81,15 @@ dependencies {
 
     //for material themes
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation "androidx.activity:activity-ktx:$rootProject.activityVersion"
+    // Room components
+    implementation "androidx.room:room-ktx:$rootProject.roomVersion"
+    kapt "androidx.room:room-compiler:$rootProject.roomVersion"
+    androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycleVersion"
+
 }
