@@ -2,7 +2,7 @@ package ge.sweeft.rickandmortyalbum.db.entity
 
 import androidx.annotation.NonNull
 import androidx.room.*
-import ge.sweeft.rickandmortyalbum.db.converter.Converters
+import ge.sweeft.rickandmortyalbum.db.converter.StringListConverters
 
 @Entity(tableName = "episode")
 data class EpisodeEntity(
@@ -11,7 +11,7 @@ data class EpisodeEntity(
     @NonNull
     val id: Int,
     val air_date: String,
-    @TypeConverters(Converters::class)
+    @TypeConverters(StringListConverters::class)
     val characters: List<String>,
     val created: String,
     val episode: String,

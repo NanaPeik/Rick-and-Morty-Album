@@ -29,9 +29,8 @@ class CharacterAdapter(
                     CharacterListFragmentDirections.actionCharacterListFragmentToEpisodeListFragment(
                         character.id
                     )
-
-                it.findNavController().navigate(action)
                 fragmentManager.popBackStack()
+                it.findNavController().navigate(action)
             }
         }
     }

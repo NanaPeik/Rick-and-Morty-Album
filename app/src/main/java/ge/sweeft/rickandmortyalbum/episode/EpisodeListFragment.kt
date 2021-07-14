@@ -51,24 +51,6 @@ class EpisodeListFragment : Fragment() {
                 }
             })
         } else {
-            episodeViewModel.episode.value = ""
-            episodeViewModel.episodesResponse.observe(viewLifecycleOwner, {
-                if (it != null) {
-                    for (episode in it.results) {
-                        episodeDaoViewModel.insert(
-                            EpisodeEntity(
-                                episode.id,
-                                episode.air_date,
-                                episode.characters,
-                                episode.created,
-                                episode.episode,
-                                episode.name,
-                                episode.url
-                            )
-                        )
-                    }
-                }
-            })
             episodeDaoViewModel.allEpisode.observe(viewLifecycleOwner, {
                 var episodes = arrayListOf<Episode>()
                 if (it != null) {
@@ -89,6 +71,28 @@ class EpisodeListFragment : Fragment() {
 
                 }
             })
+            episodeViewModel.episode.value = ""
+            episodeViewModel.episodesResponse.observe(viewLifecycleOwner, {
+                if (it != null) {
+                    for (episode in it.results) {
+                        episodeDaoViewModel.insert(
+                            EpisodeEntity(
+                                episode.id,
+                                episode.air_date,
+                                episode.characters,
+                                episode.created,
+                                episode.episode,
+                                episode.name,
+                                episode.url
+                            )
+                        )
+                    }
+                    this.episodesAdapter = EpisodesAdapter(it.results, parentFragmentManager)
+                    episodesAdapter.notifyDataSetChanged()
+                }
+
+            })
+
         }
         searchEpisodes()
     }
