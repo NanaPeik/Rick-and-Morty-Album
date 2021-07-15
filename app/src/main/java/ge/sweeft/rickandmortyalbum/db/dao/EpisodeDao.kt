@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EpisodeDao {
-    @Query("SELECT * FROM episode ORDER BY name ASC")
+    @Query("SELECT * FROM episode ORDER BY RANDOM()")
     fun getAllEpisode(): Flow<List<EpisodeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

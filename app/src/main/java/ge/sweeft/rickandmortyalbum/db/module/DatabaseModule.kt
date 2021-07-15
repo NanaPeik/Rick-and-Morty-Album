@@ -8,7 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ge.sweeft.rickandmortyalbum.db.EpisodeDatabase
-import ge.sweeft.rickandmortyalbum.db.dao.CharacterDao
 import ge.sweeft.rickandmortyalbum.db.dao.EpisodeDao
 import javax.inject.Singleton
 
@@ -26,11 +25,12 @@ class DatabaseModule {
             appContext,
             EpisodeDatabase::class.java,
             "RssReader"
-        ).fallbackToDestructiveMigration().build()
+        ).addMigrations(EpisodeDatabase.MIGRATION_2_3).build()
+//        fallbackToDestructiveMigration()
     }
-    @Provides
-    fun provideCharacterDao(episodeDatabase: EpisodeDatabase): CharacterDao {
-        return episodeDatabase.characterDao()
-    }
+//    @Provides
+//    fun provideCharacterDao(episodeDatabase: EpisodeDatabase): CharacterDao {
+//        return episodeDatabase.characterDao()
+//    }
 
 }

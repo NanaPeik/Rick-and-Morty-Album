@@ -10,13 +10,13 @@
         android:name="ge.sweeft.rickandmortyalbum.episode.EpisodeListFragment"
         android:label="fragment_episode_list"
         tools:layout="@layout/fragment_episode_list">
-        <action
-            android:id="@+id/action_episodeListFragment_to_characterListFragment"
-            app:destination="@id/characterListFragment" />
         <argument
             android:name="character_id"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_episodeListFragment_to_characterListFragment"
+            app:destination="@id/characterListFragment" />
     </fragment>
     <fragment
         android:id="@+id/characterListFragment"

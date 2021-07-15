@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ge.sweeft.rickandmortyalbum.databinding.FragmentCharacterListBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Character
-import ge.sweeft.rickandmortyalbum.db.viewmodel.EpisodeDaoViewModel
 import ge.sweeft.rickandmortyalbum.episode.EpisodeViewModel
 
 @AndroidEntryPoint
@@ -21,7 +20,6 @@ class CharacterListFragment : Fragment() {
     private lateinit var binding: FragmentCharacterListBinding
     private lateinit var characterAdapter: CharacterAdapter
     private val episodeViewModel: EpisodeViewModel by viewModels()
-    private val episodeDaoViewModel: EpisodeDaoViewModel by viewModels()
     private val characterViewModel: CharacterViewModel by viewModels()
     private val args: CharacterListFragmentArgs by navArgs()
 
@@ -68,7 +66,7 @@ class CharacterListFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
 
-                characterAdapter.search(newText)
+                characterAdapter.search(newText,binding.emptyCharactersPage)
                 return true
             }
 

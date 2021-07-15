@@ -1,7 +1,9 @@
 package ge.sweeft.rickandmortyalbum.character
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -50,12 +52,17 @@ class CharacterAdapter(
         return charactersList.size
     }
 
-    fun search(newText: String?) {
+    fun search(newText: String?, emptyCharactersPage: LinearLayout) {
         charactersList = arrayListOf()
         for (character in characters) {
             if (newText?.let { character.name.contains(it) } == true) {
                 charactersList.add(character)
             }
+        }
+        if (charactersList.size == 0) {
+            emptyCharactersPage.visibility = View.VISIBLE
+        } else {
+            emptyCharactersPage.visibility = View.GONE
         }
         notifyDataSetChanged()
     }
