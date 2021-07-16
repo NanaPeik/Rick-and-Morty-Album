@@ -12,11 +12,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel.firstScreen.value = true
+        viewModel.firstScreen = true
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.firstScreen.value = true
+        viewModel.firstScreen = true
     }
 }

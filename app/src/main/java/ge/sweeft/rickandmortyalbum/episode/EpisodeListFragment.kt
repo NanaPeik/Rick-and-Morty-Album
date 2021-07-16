@@ -31,8 +31,6 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
     private lateinit var episodesAdapter: EpisodesAdapter
     private val args: EpisodeListFragmentArgs by navArgs()
 
-    private val countDownMilesInFuture: Long = 2000
-    private val countDownInterval: Long = 1000
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,62 +45,14 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
         super.onViewCreated(view, savedInstanceState)
         if (args.characterId != 0) {
             characterViewModel.characterId.value = args.characterId
-            characterViewModel.characterResponseId.observe(viewLifecycleOwner, {
-                it?.let {
-                    getEpisodesUrl(it.episode)
-                    binding.characterInfo.visibility = View.VISIBLE
-                    Picasso.get().load(it.image).into(binding.characterDetailImage)
-                    binding.characterDetailName.text = it.name
-                    binding.characterDetailStatus.text = it.status
-                    binding.characterGender.text = it.gender
-                    binding.characterOriginName.text = it.origin.name
-                }
-            })
+            characterObserver()
         } else {
-            episodeDaoViewModel.allEpisode.observe(viewLifecycleOwner, {
-                var episodes = arrayListOf<Episode>()
-                if (it != null) {
-                    for (episode in it) {
-                        episodes.add(
-                            Episode(
-                                episode.air_date,
-                                episode.characters,
-                                episode.created,
-                                episode.episode,
-                                episode.id,
-                                episode.name,
-                                episode.url
-                            )
-                        )
-                        setEpisodesAdapter(episodes)
-                    }
-
-                }
-            })
+            episodesByUser()
             episodeViewModel.episode.value = ""
-            episodeViewModel.episodesResponse.observe(viewLifecycleOwner, {
-                if (it != null) {
-                    for (episode in it.results) {
-                        episodeDaoViewModel.insert(
-                            EpisodeEntity(
-                                episode.id,
-                                episode.air_date,
-                                episode.characters,
-                                episode.created,
-                                episode.episode,
-                                episode.name,
-                                episode.url
-                            )
-                        )
-                    }
-                    this.episodesAdapter = EpisodesAdapter(
-                        it.results,
-                        this
-                    )
-                    episodesAdapter.notifyDataSetChanged()
-                }
-            })
+            updateLocalDatabase()
         }
+
+        checkSearchResults()
 
         searchEpisodes()
 
@@ -117,30 +67,13 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
 
             override fun onQueryTextChange(newText: String?): Boolean {
 
-                val timer = object : CountDownTimer(countDownMilesInFuture, countDownInterval) {
-                    override fun onTick(millisUntilFinished: Long) {}
-
-                    override fun onFinish() {
-                        if (newText != null) {
-                            if (mainViewModel.firstScreen.value == true) {
-                                episodeViewModel.filteredAllEpisodes(newText)
-                            } else {
-                                episodeViewModel.filteredEpisodes(newText)
-                            }
-                            episodeViewModel.filteredEpisodes.observe(viewLifecycleOwner, {
-                                if (it.isEmpty()) {
-                                    binding.emptyCharactersPage.visibility = View.VISIBLE
-                                } else {
-                                    binding.emptyCharactersPage.visibility = View.GONE
-                                }
-                                setEpisodesAdapter(it)
-                                episodesAdapter.notifyDataSetChanged()
-                            })
-                        }
+                if (newText != null) {
+                    if (mainViewModel.firstScreen) {
+                        episodeViewModel.filteredAllEpisodes(newText)
+                    } else {
+                        episodeViewModel.filteredEpisodes(newText)
                     }
                 }
-
-                timer.start()
                 return true
             }
         })
@@ -165,12 +98,12 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
     }
 
     override fun itemClicked(id: Int) {
-        if (mainViewModel.firstScreen.value == true) {
+        if (mainViewModel.firstScreen) {
             val action =
                 EpisodeListFragmentDirections.actionEpisodeListFragmentToCharacterListFragment2(
                     id
                 )
-            mainViewModel.firstScreen.value = false
+            mainViewModel.firstScreen = false
             findNavController().navigate(action)
         } else {
             val action =
@@ -181,5 +114,77 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
         }
     }
 
+    private fun characterObserver() {
+        characterViewModel.characterResponseId.observe(viewLifecycleOwner, {
+            it?.let {
+                getEpisodesUrl(it.episode)
+                binding.characterInfo.visibility = View.VISIBLE
+                Picasso.get().load(it.image).into(binding.characterDetailImage)
+                binding.characterDetailName.text = it.name
+                binding.characterDetailStatus.text = it.status
+                binding.characterGender.text = it.gender
+                binding.characterOriginName.text = it.origin.name
+            }
+        })
+    }
 
+    private fun episodesByUser() {
+        episodeDaoViewModel.allEpisode.observe(viewLifecycleOwner, {
+            val episodes = arrayListOf<Episode>()
+            if (it != null) {
+                for (episode in it) {
+                    episodes.add(
+                        Episode(
+                            episode.air_date,
+                            episode.characters,
+                            episode.created,
+                            episode.episode,
+                            episode.id,
+                            episode.name,
+                            episode.url
+                        )
+                    )
+                    setEpisodesAdapter(episodes)
+                }
+
+            }
+        })
+    }
+
+    private fun updateLocalDatabase() {
+        episodeViewModel.episodesResponse.observe(viewLifecycleOwner, {
+            if (it != null) {
+                for (episode in it.results) {
+                    episodeDaoViewModel.insert(
+                        EpisodeEntity(
+                            episode.id,
+                            episode.air_date,
+                            episode.characters,
+                            episode.created,
+                            episode.episode,
+                            episode.name,
+                            episode.url
+                        )
+                    )
+                }
+                this.episodesAdapter = EpisodesAdapter(
+                    it.results,
+                    this
+                )
+                episodesAdapter.notifyDataSetChanged()
+            }
+        })
+    }
+
+    private fun checkSearchResults() {
+        episodeViewModel.filteredEpisodes.observe(viewLifecycleOwner, {
+            if (it.isEmpty()) {
+                binding.emptyCharactersPage.visibility = View.VISIBLE
+            } else {
+                binding.emptyCharactersPage.visibility = View.GONE
+            }
+            setEpisodesAdapter(it)
+            episodesAdapter.notifyDataSetChanged()
+        })
+    }
 }

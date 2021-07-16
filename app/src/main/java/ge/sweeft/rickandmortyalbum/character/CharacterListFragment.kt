@@ -24,8 +24,6 @@ class CharacterListFragment : Fragment() {
     private val characterViewModel: CharacterViewModel by viewModels()
     private val args: CharacterListFragmentArgs by navArgs()
 
-    private val countDownMilesInFuture: Long = 2000
-    private val countDownInterval: Long = 1000
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,15 +38,7 @@ class CharacterListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         episodeViewModel.episodeId.value = args.episodeId
-        episodeViewModel.episodeResponseById.observe(viewLifecycleOwner, {
-            if (it != null) {
-                getCharactersApi(it.characters)
-                binding.episodeDataCharacter.text = it.air_date
-                binding.episodeNameCharacter.text = it.name
-                binding.episodeEpisodeCharacter.text = it.episode
-
-            }
-        })
+        observeEpisodesByCharacter()
 
         searchCharacters()
     }
@@ -62,24 +52,11 @@ class CharacterListFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
 
-                val timer = object : CountDownTimer(countDownMilesInFuture, countDownInterval) {
-                    override fun onTick(millisUntilFinished: Long) {}
-                    override fun onFinish() {
-                        newText?.let {
-                            characterViewModel.searchCharacter(newText)
-                        }
-                        characterViewModel.filteredCharacters.observe(viewLifecycleOwner, {
-                            if (it.isEmpty()) {
-                                binding.emptyCharactersPage.visibility = View.VISIBLE
-                            } else {
-                                binding.emptyCharactersPage.visibility = View.GONE
-                            }
-                            setCharacterAdapter(it)
-                            characterAdapter.notifyDataSetChanged()
-                        })
-                    }
+                newText?.let {
+                    characterViewModel.searchCharacter(newText)
                 }
-                timer.start()
+                observeFilteresEpisodes()
+
                 return true
             }
         })
@@ -99,5 +76,29 @@ class CharacterListFragment : Fragment() {
         binding.characterRecycler.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         binding.characterRecycler.adapter = characterAdapter
+    }
+
+    private fun observeEpisodesByCharacter() {
+        episodeViewModel.episodeResponseById.observe(viewLifecycleOwner, {
+            if (it != null) {
+                getCharactersApi(it.characters)
+                binding.episodeDataCharacter.text = it.air_date
+                binding.episodeNameCharacter.text = it.name
+                binding.episodeEpisodeCharacter.text = it.episode
+
+            }
+        })
+    }
+
+    private fun observeFilteresEpisodes() {
+        characterViewModel.filteredCharacters.observe(viewLifecycleOwner, {
+            if (it.isEmpty()) {
+                binding.emptyCharactersPage.visibility = View.VISIBLE
+            } else {
+                binding.emptyCharactersPage.visibility = View.GONE
+            }
+            setCharacterAdapter(it)
+            characterAdapter.notifyDataSetChanged()
+        })
     }
 }

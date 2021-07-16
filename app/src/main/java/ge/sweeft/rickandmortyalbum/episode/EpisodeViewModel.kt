@@ -9,6 +9,8 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ge.sweeft.rickandmortyalbum.dataclass.Episode
 import ge.sweeft.rickandmortyalbum.dataclass.EpisodeApiData
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -50,34 +52,43 @@ class EpisodeViewModel @Inject constructor(
     }
 
 
-    var filteredEpisodes= MutableLiveData<List<Episode>>()
-
+    var filteredEpisodes = MutableLiveData<List<Episode>>()
+    private var searchJob: Job? = null
 
     //ამ ორის გაერთიანება ალბათ შეიძლება, ვცადე და არ იმუშავა
     fun filteredAllEpisodes(episodeName: String) {
-        val episodes = episodesResponse.value?.results
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(1000)
+            val episodes = episodesResponse.value?.results
 
-        val episodesList = arrayListOf<Episode>()
-        if (episodes != null) {
-            for (episode in episodes) {
-                if (episode.name.contains(episodeName)) {
-                    episodesList.add(episode)
+            val episodesList = arrayListOf<Episode>()
+            if (episodes != null) {
+                for (episode in episodes) {
+                    if (episode.name.contains(episodeName)) {
+                        episodesList.add(episode)
+                    }
                 }
+                filteredEpisodes.value = episodesList
             }
-            filteredEpisodes.value = episodesList
         }
     }
-    fun filteredEpisodes(episodeName: String) {
-        val episodes = episodesByCharacterResponse.value
 
-        val episodesList = arrayListOf<Episode>()
-        if (episodes != null) {
-            for (episode in episodes) {
-                if (episode.name.contains(episodeName)) {
-                    episodesList.add(episode)
+    fun filteredEpisodes(episodeName: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(1000)
+            val episodes = episodesByCharacterResponse.value
+
+            val episodesList = arrayListOf<Episode>()
+            if (episodes != null) {
+                for (episode in episodes) {
+                    if (episode.name.contains(episodeName)) {
+                        episodesList.add(episode)
+                    }
                 }
+                filteredEpisodes.value = episodesList
             }
-            filteredEpisodes.value = episodesList
         }
     }
 }

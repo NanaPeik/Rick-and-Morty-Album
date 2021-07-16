@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
-    var firstScreen = MutableLiveData<Boolean>(false)
+    var firstScreen = false
 }
