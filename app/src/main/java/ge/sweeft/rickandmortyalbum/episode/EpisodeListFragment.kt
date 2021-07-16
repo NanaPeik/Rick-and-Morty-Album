@@ -1,15 +1,19 @@
 package ge.sweeft.rickandmortyalbum.episode
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import ge.sweeft.rickandmortyalbum.MainViewModel
 import ge.sweeft.rickandmortyalbum.character.CharacterViewModel
 import ge.sweeft.rickandmortyalbum.databinding.FragmentEpisodeListBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Episode
@@ -17,14 +21,18 @@ import ge.sweeft.rickandmortyalbum.db.viewmodel.EpisodeDaoViewModel
 import ge.sweeft.rickandmortyalbum.db.entity.EpisodeEntity
 
 @AndroidEntryPoint
-class EpisodeListFragment : Fragment() {
+class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
 
     private val episodeDaoViewModel: EpisodeDaoViewModel by viewModels()
     private val episodeViewModel: EpisodeViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val characterViewModel: CharacterViewModel by viewModels()
     private lateinit var binding: FragmentEpisodeListBinding
     private lateinit var episodesAdapter: EpisodesAdapter
     private val args: EpisodeListFragmentArgs by navArgs()
+
+    private val countDownMilesInFuture: Long = 2000
+    private val countDownInterval: Long = 1000
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,14 +95,17 @@ class EpisodeListFragment : Fragment() {
                             )
                         )
                     }
-                    this.episodesAdapter = EpisodesAdapter(it.results, parentFragmentManager)
+                    this.episodesAdapter = EpisodesAdapter(
+                        it.results,
+                        this
+                    )
                     episodesAdapter.notifyDataSetChanged()
                 }
-
             })
-
         }
+
         searchEpisodes()
+
     }
 
     private fun searchEpisodes() {
@@ -105,31 +116,70 @@ class EpisodeListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    episodesAdapter.search(newText)
+
+                val timer = object : CountDownTimer(countDownMilesInFuture, countDownInterval) {
+                    override fun onTick(millisUntilFinished: Long) {}
+
+                    override fun onFinish() {
+                        if (newText != null) {
+                            if (mainViewModel.firstScreen.value == true) {
+                                episodeViewModel.filteredAllEpisodes(newText)
+                            } else {
+                                episodeViewModel.filteredEpisodes(newText)
+                            }
+                            episodeViewModel.filteredEpisodes.observe(viewLifecycleOwner, {
+                                if (it.isEmpty()) {
+                                    binding.emptyCharactersPage.visibility = View.VISIBLE
+                                } else {
+                                    binding.emptyCharactersPage.visibility = View.GONE
+                                }
+                                setEpisodesAdapter(it)
+                                episodesAdapter.notifyDataSetChanged()
+                            })
+                        }
+                    }
                 }
+
+                timer.start()
                 return true
             }
-
         })
     }
 
     private fun getEpisodesUrl(episodesUrl: List<String>) {
         episodeViewModel.getEpisodesByCharacter(episodesUrl)
         episodeViewModel.episodesByCharacterResponse.observe(viewLifecycleOwner, {
-
             setEpisodesAdapter(it)
             this.episodesAdapter.notifyDataSetChanged()
         })
     }
 
     private fun setEpisodesAdapter(episodes: List<Episode>) {
-
-        this.episodesAdapter = EpisodesAdapter(episodes, parentFragmentManager)
+        this.episodesAdapter =
+            EpisodesAdapter(episodes, this)
+        this.episodesAdapter.notifyDataSetChanged()
 
         binding.characterDetailEpisodes.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         binding.characterDetailEpisodes.adapter = episodesAdapter
     }
+
+    override fun itemClicked(id: Int) {
+        if (mainViewModel.firstScreen.value == true) {
+            val action =
+                EpisodeListFragmentDirections.actionEpisodeListFragmentToCharacterListFragment2(
+                    id
+                )
+            mainViewModel.firstScreen.value = false
+            findNavController().navigate(action)
+        } else {
+            val action =
+                EpisodeListFragmentDirections.actionEpisodeListFragmentToCharacterListFragment(
+                    id
+                )
+            findNavController().navigate(action)
+        }
+    }
+
 
 }

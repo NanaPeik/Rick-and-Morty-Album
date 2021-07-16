@@ -16,6 +16,11 @@
             android:defaultValue="0" />
         <action
             android:id="@+id/action_episodeListFragment_to_characterListFragment"
+            app:destination="@id/characterListFragment"
+            app:popUpTo="@id/episodeListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_episodeListFragment_to_characterListFragment2"
             app:destination="@id/characterListFragment" />
     </fragment>
     <fragment
@@ -29,6 +34,8 @@
             android:defaultValue="0" />
         <action
             android:id="@+id/action_characterListFragment_to_episodeListFragment"
-            app:destination="@id/episodeListFragment" />
+            app:destination="@id/episodeListFragment"
+            app:popUpTo="@id/characterListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

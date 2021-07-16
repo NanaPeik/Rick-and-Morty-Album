@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ge.sweeft.rickandmortyalbum.api.Repository
 import ge.sweeft.rickandmortyalbum.dataclass.Character
+import ge.sweeft.rickandmortyalbum.dataclass.Episode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,4 +35,20 @@ class CharacterViewModel @Inject constructor(var repository: Repository) : ViewM
             emit(res)
         }
     }
+
+    var filteredCharacters = MutableLiveData<List<Character>>()
+
+    fun searchCharacter(characterName: String) {
+        val charactersList = characterResponse.value
+        val filteredList = arrayListOf<Character>()
+        if (charactersList != null) {
+            for (character in charactersList) {
+                if (character.name.contains(characterName)) {
+                    filteredList.add(character)
+                }
+            }
+            filteredCharacters.value = filteredList
+        }
+    }
+
 }

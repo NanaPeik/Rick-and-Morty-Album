@@ -17,7 +17,7 @@ class EpisodeViewModel @Inject constructor(
 ) : ViewModel() {
     var episode = MutableLiveData<String>()
 
-    var episodesResponse:LiveData<EpisodeApiData?> = episode.switchMap {
+    var episodesResponse: LiveData<EpisodeApiData?> = episode.switchMap {
         liveData(Dispatchers.IO) {
             val res = repository.getAllEpisodes()
             emit(res)
@@ -39,13 +39,45 @@ class EpisodeViewModel @Inject constructor(
         var episodes = mutableListOf<Episode>()
 
         viewModelScope.launch {
-            val baseString="https://rickandmortyapi.com/api/episode/"
+            val baseString = "https://rickandmortyapi.com/api/episode/"
             for (url in episodeUrl) {
                 val id = Integer.parseInt(url.subSequence(baseString.length, url.length).toString())
                 val episode = repository.getEpisodeById(id)
                 episode?.let { episodes.add(episode) }
             }
             episodesByCharacterResponse.value = episodes
+        }
+    }
+
+
+    var filteredEpisodes= MutableLiveData<List<Episode>>()
+
+
+    //ამ ორის გაერთიანება ალბათ შეიძლება, ვცადე და არ იმუშავა
+    fun filteredAllEpisodes(episodeName: String) {
+        val episodes = episodesResponse.value?.results
+
+        val episodesList = arrayListOf<Episode>()
+        if (episodes != null) {
+            for (episode in episodes) {
+                if (episode.name.contains(episodeName)) {
+                    episodesList.add(episode)
+                }
+            }
+            filteredEpisodes.value = episodesList
+        }
+    }
+    fun filteredEpisodes(episodeName: String) {
+        val episodes = episodesByCharacterResponse.value
+
+        val episodesList = arrayListOf<Episode>()
+        if (episodes != null) {
+            for (episode in episodes) {
+                if (episode.name.contains(episodeName)) {
+                    episodesList.add(episode)
+                }
+            }
+            filteredEpisodes.value = episodesList
         }
     }
 }

@@ -12,14 +12,10 @@ import ge.sweeft.rickandmortyalbum.databinding.CharacterItemBinding
 import ge.sweeft.rickandmortyalbum.dataclass.Character
 
 class CharacterAdapter(
-    private var characters: List<Character>,
-    fragmentManager: FragmentManager
+    private var characters: List<Character>
 ) : RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
 
-    private var charactersList: ArrayList<Character> = characters as ArrayList<Character>
-    private var fragmentManager: FragmentManager = fragmentManager
-
-    class ViewHolder(var binding: CharacterItemBinding, var fragmentManager: FragmentManager) :
+    class ViewHolder(var binding: CharacterItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(character: Character) {
             binding.characterName.text = character.name
@@ -31,7 +27,7 @@ class CharacterAdapter(
                     CharacterListFragmentDirections.actionCharacterListFragmentToEpisodeListFragment(
                         character.id
                     )
-                fragmentManager.popBackStack()
+
                 it.findNavController().navigate(action)
             }
         }
@@ -41,29 +37,14 @@ class CharacterAdapter(
 
         val binding =
             CharacterItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding, fragmentManager)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.onBind(charactersList[position])
+        holder.onBind(characters[position])
     }
 
     override fun getItemCount(): Int {
-        return charactersList.size
-    }
-
-    fun search(newText: String?, emptyCharactersPage: LinearLayout) {
-        charactersList = arrayListOf()
-        for (character in characters) {
-            if (newText?.let { character.name.contains(it) } == true) {
-                charactersList.add(character)
-            }
-        }
-        if (charactersList.size == 0) {
-            emptyCharactersPage.visibility = View.VISIBLE
-        } else {
-            emptyCharactersPage.visibility = View.GONE
-        }
-        notifyDataSetChanged()
+        return characters.size
     }
 }

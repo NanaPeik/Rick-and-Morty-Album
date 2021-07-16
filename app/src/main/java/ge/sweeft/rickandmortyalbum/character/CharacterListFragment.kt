@@ -2,6 +2,7 @@ package ge.sweeft.rickandmortyalbum.character
 
 import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -23,7 +24,8 @@ class CharacterListFragment : Fragment() {
     private val characterViewModel: CharacterViewModel by viewModels()
     private val args: CharacterListFragmentArgs by navArgs()
 
-    private var mContext: Context? = null
+    private val countDownMilesInFuture: Long = 2000
+    private val countDownInterval: Long = 1000
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,12 +34,6 @@ class CharacterListFragment : Fragment() {
     ): View {
         binding = FragmentCharacterListBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mContext = activity
-        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,10 +62,26 @@ class CharacterListFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
 
-                characterAdapter.search(newText,binding.emptyCharactersPage)
+                val timer = object : CountDownTimer(countDownMilesInFuture, countDownInterval) {
+                    override fun onTick(millisUntilFinished: Long) {}
+                    override fun onFinish() {
+                        newText?.let {
+                            characterViewModel.searchCharacter(newText)
+                        }
+                        characterViewModel.filteredCharacters.observe(viewLifecycleOwner, {
+                            if (it.isEmpty()) {
+                                binding.emptyCharactersPage.visibility = View.VISIBLE
+                            } else {
+                                binding.emptyCharactersPage.visibility = View.GONE
+                            }
+                            setCharacterAdapter(it)
+                            characterAdapter.notifyDataSetChanged()
+                        })
+                    }
+                }
+                timer.start()
                 return true
             }
-
         })
     }
 
@@ -82,7 +94,7 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun setCharacterAdapter(characters: List<Character>) {
-        this.characterAdapter = CharacterAdapter(characters, parentFragmentManager)
+        this.characterAdapter = CharacterAdapter(characters)
 
         binding.characterRecycler.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
