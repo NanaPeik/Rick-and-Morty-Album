@@ -1,8 +1,6 @@
 package ge.sweeft.rickandmortyalbum.character
 
-import android.content.Context
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -40,6 +38,7 @@ class CharacterListFragment : Fragment() {
         episodeViewModel.episodeId.value = args.episodeId
         observeEpisodesByCharacter()
 
+//        setCharacterAdapter(listOf())
         searchCharacters()
     }
 
@@ -55,7 +54,7 @@ class CharacterListFragment : Fragment() {
                 newText?.let {
                     characterViewModel.searchCharacter(newText)
                 }
-                observeFilteresEpisodes()
+                observeFilteredEpisodes()
 
                 return true
             }
@@ -90,7 +89,7 @@ class CharacterListFragment : Fragment() {
         })
     }
 
-    private fun observeFilteresEpisodes() {
+    private fun observeFilteredEpisodes() {
         characterViewModel.filteredCharacters.observe(viewLifecycleOwner, {
             if (it.isEmpty()) {
                 binding.emptyCharactersPage.visibility = View.VISIBLE

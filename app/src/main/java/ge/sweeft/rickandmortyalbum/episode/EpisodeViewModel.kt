@@ -38,7 +38,7 @@ class EpisodeViewModel @Inject constructor(
     var episodesByCharacterResponse = MutableLiveData<List<Episode>>()
 
     fun getEpisodesByCharacter(episodeUrl: List<String>) {
-        var episodes = mutableListOf<Episode>()
+        val episodes = mutableListOf<Episode>()
 
         viewModelScope.launch {
             val baseString = "https://rickandmortyapi.com/api/episode/"

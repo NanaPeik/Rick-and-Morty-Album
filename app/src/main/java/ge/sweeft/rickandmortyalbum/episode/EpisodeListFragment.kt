@@ -1,7 +1,6 @@
 package ge.sweeft.rickandmortyalbum.episode
 
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -27,7 +26,8 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
     private val episodeViewModel: EpisodeViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
     private val characterViewModel: CharacterViewModel by viewModels()
-    private lateinit var binding: FragmentEpisodeListBinding
+    private var _binding: FragmentEpisodeListBinding? = null
+    private val binding get() = _binding!!
     private lateinit var episodesAdapter: EpisodesAdapter
     private val args: EpisodeListFragmentArgs by navArgs()
 
@@ -37,7 +37,7 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
+        _binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -186,5 +186,10 @@ class EpisodeListFragment : Fragment(), EpisodesAdapter.CustomClickListener {
             setEpisodesAdapter(it)
             episodesAdapter.notifyDataSetChanged()
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

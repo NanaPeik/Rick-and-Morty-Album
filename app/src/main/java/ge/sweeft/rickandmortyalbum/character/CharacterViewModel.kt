@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ge.sweeft.rickandmortyalbum.api.Repository
 import ge.sweeft.rickandmortyalbum.dataclass.Character
-import ge.sweeft.rickandmortyalbum.dataclass.Episode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

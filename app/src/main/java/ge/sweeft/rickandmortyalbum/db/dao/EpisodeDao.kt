@@ -1,5 +1,6 @@
 package ge.sweeft.rickandmortyalbum.db.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EpisodeDao {
     @Query("SELECT * FROM episode ORDER BY RANDOM()")
-    fun getAllEpisode(): Flow<List<EpisodeEntity>>
+    fun getAllEpisode(): LiveData<List<EpisodeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertEpisode(episodeEntity: EpisodeEntity)

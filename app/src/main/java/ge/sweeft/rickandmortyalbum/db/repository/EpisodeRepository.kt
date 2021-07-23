@@ -1,6 +1,7 @@
 package ge.sweeft.rickandmortyalbum.db.repository
 
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
 import ge.sweeft.rickandmortyalbum.db.dao.EpisodeDao
 import ge.sweeft.rickandmortyalbum.db.entity.EpisodeEntity
 import kotlinx.coroutines.flow.Flow
@@ -8,7 +9,7 @@ import javax.inject.Inject
 
 class EpisodeRepository @Inject constructor(private val episodeDao: EpisodeDao) {
 
-    val allEpisode: Flow<List<EpisodeEntity>> = episodeDao.getAllEpisode()
+    val allEpisode: LiveData<List<EpisodeEntity>> = episodeDao.getAllEpisode()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

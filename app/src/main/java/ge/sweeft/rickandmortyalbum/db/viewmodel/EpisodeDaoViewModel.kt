@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodeDaoViewModel @Inject constructor(private val repository: EpisodeRepository) :
     ViewModel() {
-    val allEpisode: LiveData<List<EpisodeEntity>> = repository.allEpisode.asLiveData()
+    val allEpisode: LiveData<List<EpisodeEntity>> = repository.allEpisode
 
     fun insert(episodeEntity: EpisodeEntity) = viewModelScope.launch {
         repository.insert(episodeEntity)
